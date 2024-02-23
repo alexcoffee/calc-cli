@@ -1,44 +1,10 @@
+const {sanitizeEvalExpression} = require("./util/sanitizeEvalExpression");
+const {parseInputLine} = require("./parseInputLine");
+
+const OPERATORS = ['-', '+', '/', '*']
+
 let register = 0;
-const ops = ['-', '+', '/', '*']
 
-function isDigit(character) {
-    return /^(\d|!|\.)$/g.test(character);
-}
-
-function sanitizeEvalExpression(input) {
-    return input.replace(/[^0-9!.+-/*=]/g, '');    // Replace any character that is not a digit, !, ., or = with an empty string
-}
-
-function parseInputLine(line) {
-    let parts = []
-    let startDigitPos = null
-
-    function extractNumber(start, end) {
-        return parseFloat(line.substring(start, end).replace('!', '-'))
-    }
-
-    for (let i = 0; i < line.length; i++) {
-        const char = line[i]
-
-        if (isDigit(char) && (startDigitPos === null)) {
-            startDigitPos = i;
-        } else if (startDigitPos !== null && ops.includes(char)) { // close digit substring
-            parts.push(extractNumber(startDigitPos, i))
-            startDigitPos = null;
-        }
-
-        if (ops.includes(char)) {
-            parts.push(char)
-        }
-    }
-
-    // close final digit
-    if (startDigitPos !== null) {
-        parts.push(extractNumber(startDigitPos, line.length))
-    }
-
-    return parts
-}
 
 function calc(line) {
     const parts = parseInputLine(line)
@@ -50,24 +16,25 @@ function calc(line) {
 
     if (line === '=') {
         return register
+    }
+
+    // evaluate expression and update global register state
+    const eq = parts.join('') // sanitized input expression
+    const glue = OPERATORS.includes(parts[0]) ? '' : '+' // insert '+' if first part is not an operator. e.g. 2+45 becomes reg = reg+2+45
+    const mathExpression = sanitizeEvalExpression(`${register} ${glue} ${eq}`) // e.g. "register + 2 + 45"
+
+    const cmd = `register = ${mathExpression}`
+
+    try {
+        eval(cmd);
+    } catch (e) {
+        return 'NaN'
+    }
+
+    if (line.endsWith('=')) {
+        return register
     } else {
-        // compute sum and return last number
-        const eq = parts.join('')
-        const glue = ops.includes(parts[0]) ? '' : '+' // insert '+' if first part is not an operator. e.g. 2+45 becomes reg = reg+2+45
-        const arithmetic = sanitizeEvalExpression(`${register} ${glue} ${eq}`) // e.g. "register + 2 + 45"
-        const cmd = `register = ${arithmetic}`
-
-        try {
-            eval(cmd);
-        } catch (e) {
-            console.log(e.message)
-        }
-
-        if (line.endsWith('=')) {
-            return register
-        } else {
-            return parts[parts.length - 1]
-        }
+        return parts[parts.length - 1]
     }
 }
 

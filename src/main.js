@@ -8,11 +8,13 @@ const rl = readline.createInterface({
 
 function loop() {
     rl.question('> ', (line) => {
-        console.log(calc(line))
-
         if (line.toLowerCase() === 'exit') {
             rl.close();
+            return;
         }
+
+        const result = calc(line) // modifies global register state
+        console.log(result)
 
         loop()
     });
