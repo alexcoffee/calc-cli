@@ -1,4 +1,4 @@
-const {calc} = require('../src/calc')
+import {calc} from "../calc";
 
 test('2+45', () => {
     const register = 0;

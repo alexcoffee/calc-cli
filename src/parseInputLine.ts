@@ -1,11 +1,13 @@
-const {isDigit} = require("./util/isDigit");
-const {OPERATORS} = require("./OPERATORS");
+import {isDigit} from "./util/isDigit";
+import {Operator} from "./types/operator";
 
-function parseInputLine(line) {
+type Term = number | string;
+
+export function parseInputLine(line: string): Term[] {
     const parts = []
     let startDigitPos = null
 
-    const extractNumber = (start, end) => {
+    const extractNumber = (start: number, end: number): number => {
         return parseFloat(line.substring(start, end).replace('!', '-'));
     }
 
@@ -15,13 +17,13 @@ function parseInputLine(line) {
         if (isDigit(char) && (startDigitPos === null)) {
             // save start of possibly multi-digit number
             startDigitPos = i;
-        } else if (startDigitPos !== null && Object.values(OPERATORS).includes(char)) {
+        } else if (startDigitPos !== null && Object.values(Operator).includes(char as Operator)) {
             // close multi-digit substring
             parts.push(extractNumber(startDigitPos, i))
             startDigitPos = null;
         }
 
-        if (Object.values(OPERATORS).includes(char)) {
+        if (Object.values(Operator).includes(char as Operator)) {
             parts.push(char)
         }
     }
@@ -33,5 +35,3 @@ function parseInputLine(line) {
 
     return parts
 }
-
-module.exports = {parseInputLine}

@@ -1,5 +1,6 @@
-const readline = require('readline');
-const {calc} = require('./calc')
+import * as readline from "readline";
+
+import {calc} from "./calc";
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -11,7 +12,7 @@ const state = {
 }
 
 function loop() {
-    rl.question('> ', (line) => {
+    rl.question('> ', (line: string) => {
         if (line.toLowerCase() === 'exit') {
             rl.close();
             return;

@@ -1,8 +1,10 @@
-const {parseInputLine} = require("./parseInputLine");
-const {evalExpression} = require("./evalExpression");
-const {OPERATORS} = require("./OPERATORS");
+import {State} from "./types/state";
+import {parseInputLine} from "./parseInputLine";
+import {evalExpression} from "./evalExpression";
+import {Operator} from "./types/operator";
 
-function calc(state, line) { // evaluate input expression and update global register state
+
+export function calc(state: State, line: string): number { // evaluate input expression and update global register state
     if (line.toLowerCase() === 'c') {
         state.register = 0
         return 0
@@ -14,7 +16,7 @@ function calc(state, line) { // evaluate input expression and update global regi
 
     const terms = parseInputLine(line)
 
-    if (!Object.values(OPERATORS).includes(terms[0])) {
+    if (!Object.values(Operator).includes(terms[0] as Operator)) {
         terms.unshift('+') // insert '+' if first term is not an operator. e.g. 2+45 becomes +2+45
     }
 
@@ -25,8 +27,6 @@ function calc(state, line) { // evaluate input expression and update global regi
     if (line.endsWith('=')) {
         return state.register
     } else {
-        return terms[terms.length - 1]
+        return terms[terms.length - 1] as number
     }
 }
-
-module.exports = {calc}
