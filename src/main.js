@@ -6,6 +6,10 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
+const state = {
+    register: 0
+}
+
 function loop() {
     rl.question('> ', (line) => {
         if (line.toLowerCase() === 'exit') {
@@ -13,7 +17,7 @@ function loop() {
             return;
         }
 
-        const result = calc(line) // modifies global register state
+        const result = calc(state, line) // modifies global register state
         console.log(result)
 
         loop()

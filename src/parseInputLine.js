@@ -1,6 +1,5 @@
 const {isDigit} = require("./util/isDigit");
-
-const OPERATORS = ['-', '+', '/', '*']
+const {OPERATORS} = require("./OPERATORS");
 
 function parseInputLine(line) {
     const parts = []
@@ -16,13 +15,13 @@ function parseInputLine(line) {
         if (isDigit(char) && (startDigitPos === null)) {
             // save start of possibly multi-digit number
             startDigitPos = i;
-        } else if (startDigitPos !== null && OPERATORS.includes(char)) {
+        } else if (startDigitPos !== null && Object.values(OPERATORS).includes(char)) {
             // close multi-digit substring
             parts.push(extractNumber(startDigitPos, i))
             startDigitPos = null;
         }
 
-        if (OPERATORS.includes(char)) {
+        if (Object.values(OPERATORS).includes(char)) {
             parts.push(char)
         }
     }

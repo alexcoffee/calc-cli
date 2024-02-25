@@ -1,40 +1,31 @@
-const {sanitizeEvalExpression} = require("./util/sanitizeEvalExpression");
 const {parseInputLine} = require("./parseInputLine");
+const {evalExpression} = require("./evalExpression");
+const {OPERATORS} = require("./OPERATORS");
 
-const OPERATORS = ['-', '+', '/', '*']
-
-let register = 0;
-
-
-function calc(line) {
-    const parts = parseInputLine(line)
-
+function calc(state, line) { // evaluate input expression and update global register state
     if (line.toLowerCase() === 'c') {
-        register = 0
+        state.register = 0
         return 0
     }
 
     if (line === '=') {
-        return register
+        return state.register
     }
 
-    // evaluate expression and update global register state
-    const eq = parts.join('') // sanitized input expression
-    const glue = OPERATORS.includes(parts[0]) ? '' : '+' // insert '+' if first part is not an operator. e.g. 2+45 becomes reg = reg+2+45
-    const mathExpression = sanitizeEvalExpression(`${register} ${glue} ${eq}`) // e.g. "register + 2 + 45"
+    const terms = parseInputLine(line)
 
-    const cmd = `register = ${mathExpression}`
-
-    try {
-        eval(cmd);
-    } catch (e) {
-        return 'NaN'
+    if (!Object.values(OPERATORS).includes(terms[0])) {
+        terms.unshift('+') // insert '+' if first term is not an operator. e.g. 2+45 becomes +2+45
     }
+
+    terms.unshift(state.register)
+
+    state.register = evalExpression(terms);
 
     if (line.endsWith('=')) {
-        return register
+        return state.register
     } else {
-        return parts[parts.length - 1]
+        return terms[terms.length - 1]
     }
 }
 
