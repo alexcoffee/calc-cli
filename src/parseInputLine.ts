@@ -8,7 +8,7 @@ export function parseInputLine(line: string): Term[] {
     let startDigitPos = null
 
     const extractNumber = (start: number, end: number): number => {
-        return parseFloat(line.substring(start, end).replace('!', '-'));
+        return parseFloat(line.substring(start, end));
     }
 
     for (let i = 0; i < line.length; i++) {

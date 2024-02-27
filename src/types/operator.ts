@@ -3,6 +3,8 @@ export enum Operator {
     add = '+',
     divide = '/',
     multiply = '*',
+    percentage = '%',
+    negate = '!',
     pOpen = '(',
     pClose = ')',
 }

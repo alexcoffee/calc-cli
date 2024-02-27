@@ -36,14 +36,25 @@ export function evalExpression(terms: Term[]): number {
 }
 
 function evalFlatTerms(terms: Term[]): number {
-    const orderOfOps = [['*', '/',], ['+', '-']]
+    const orderOfOps = [
+        ['!', '%', '*', '/',],
+        ['+', '-']
+    ]
 
     for (const ops of orderOfOps) {
         for (let i = 1; i < terms.length; i += 2) { // hop to matching op(s)
-            if (ops.includes(String(terms[i]))) {
-                terms[i + 1] = doMath(terms[i - 1] as number, terms[i] as Operator, terms[i + 1] as number) // value has to be on the right (i+1) because next op might need it
-                terms[i] = null
-                terms[i - 1] = null
+            if (terms[i] == Operator.negate) {
+                terms[i] = terms[i - 1] as number * -1;
+                terms[i-1] = null;
+            } else if (ops.includes(String(terms[i]))) {
+                if (terms[i] == Operator.percentage) {
+                    terms[i] = doMath(terms[i - 1] as number, Operator.divide, 100)
+                    terms[i - 1] = null
+                } else {
+                    terms[i + 1] = doMath(terms[i - 1] as number, terms[i] as Operator, terms[i + 1] as number) // value has to be on the right (i+1) because next op might need it
+                    terms[i] = null
+                    terms[i - 1] = null
+                }
             }
         }
         terms = terms.filter(t => t !== null)
@@ -65,6 +76,9 @@ function doMath(register: number, op: Operator, num: number): number {
             return num === 0 ? Number.POSITIVE_INFINITY : register / num;
 
         case Operator.multiply:
+            return register * num;
+
+        case Operator.percentage:
             return register * num;
 
         default:

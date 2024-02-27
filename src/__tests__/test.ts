@@ -46,3 +46,18 @@ test('divide by zero', () => {
     const actual = calc({register: 10}, `/0=`)
     expect(actual).toBe(Number.POSITIVE_INFINITY)
 })
+
+test('percentage', () => {
+    const actual = calc({register: 10}, '+5%=')
+    expect(actual).toBe(10.05)
+})
+
+test('negation', () => {
+    const actual = calc({register: 0}, '2!=')
+    expect(actual).toBe(-2)
+})
+
+test('negation', () => {
+    const actual = calc({register: 10}, '2!=')
+    expect(actual).toBe(8)
+})
